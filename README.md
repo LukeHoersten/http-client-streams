@@ -1,4 +1,4 @@
-http-client-streams
+http-client-streams [![Hackage](https://img.shields.io/hackage/v/http-client-streams.svg?style=flat)](https://hackage.haskell.org/package/http-client-streams) [![Build Status](https://travis-ci.org/dmjio/http-client-streams.svg)](https://travis-ci.org/dmjio/http-client-streams)
 ===================
 
 ## Usage
