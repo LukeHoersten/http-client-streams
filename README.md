@@ -6,14 +6,14 @@ http-client-streams [![Hackage](https://img.shields.io/hackage/v/http-client-str
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import           OpenSSL                ( withOpenSSL )
-import           OpenSSL.Session        ( context )
 import qualified System.IO.Streams as Streams
 import           System.IO.Streams.HTTP ( opensslManagerSettings
                                         , parseUrl
                                         , withManager
                                         , withHTTP
                                         , responseBody
+                                        , withOpenSSL
+                                        , context
                                         )
 
 ------------------------------------------------------------------------------

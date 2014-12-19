@@ -4,14 +4,14 @@
 -- > {-# LANGUAGE OverloadedStrings #-}
 -- > module Main where
 -- >  
--- > import           OpenSSL                ( withOpenSSL )
--- > import           OpenSSL.Session        ( context )
 -- > import qualified System.IO.Streams as Streams
 -- > import           System.IO.Streams.HTTP ( opensslManagerSettings
 -- >                                         , parseUrl
 -- >                                         , withManager
 -- >                                         , withHTTP
 -- >                                         , responseBody
+-- >                                         , withOpenSSL
+-- >                                         , context
 -- >                                         )
 -- >  
 -- > ------------------------------------------------------------------------------
@@ -33,6 +33,8 @@ module System.IO.Streams.HTTP (
     -- $httpclient
     module Network.HTTP.Client
   , module Network.HTTP.Client.OpenSSL
+  , module OpenSSL
+  , module OpenSSL.Session
     -- * io-streams Interface
   , withHTTP
   , streamN
@@ -46,6 +48,9 @@ import qualified Data.ByteString as B
 import           Data.Int                ( Int64 )
 import           Network.HTTP.Client
 import           Network.HTTP.Client.OpenSSL
+
+import           OpenSSL
+import           OpenSSL.Session
 
 import           System.IO               ( stdout )
 import           System.IO.Streams       ( InputStream
