@@ -19,5 +19,4 @@ main = withOpenSSL $ do
   req <- parseUrl "https://google.com"
   withManager settings $ \mgr ->
     withHTTP req mgr $ \resp ->
-      Streams.supplyTo Streams.stdout (responseBody resp)
-  
+      Streams.supplyTo Streams.stdout (responseBody resp)  
