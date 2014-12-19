@@ -9,6 +9,9 @@ import           System.IO.Streams.HTTP ( opensslManagerSettings
                                         , responseBody
                                         , withOpenSSL
                                         , context
+                                        , stream
+                                        , method
+                                        , requestBody
                                         )
 
 ------------------------------------------------------------------------------
@@ -20,3 +23,15 @@ main = withOpenSSL $ do
   withManager settings $ \mgr ->
     withHTTP req mgr $ \resp ->
       Streams.supplyTo Streams.stdout (responseBody resp)  
+
+post :: IO ()
+post = withOpenSSL $ do
+  let settings = opensslManagerSettings context         
+  req <- parseUrl "https://google.com"
+  let request = req { method = "POST"
+                    , requestBody = stream $ Streams.fromLazyByteString "body"
+                    }
+  withManager settings $ \mgr ->
+    withHTTP request mgr $ \resp ->
+      Streams.supplyTo Streams.stdout (responseBody resp)  
+

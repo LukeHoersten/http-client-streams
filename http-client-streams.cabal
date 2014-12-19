@@ -1,5 +1,5 @@
 name:                http-client-streams
-version:             0.1.0.1
+version:             0.2.0.0
 synopsis:            http-client for io-streams supporting openssl
 description:         Thin io-streams wrapper for http-client w/ openssl support
 license:             BSD3

@@ -12,6 +12,9 @@
 -- >                                         , responseBody
 -- >                                         , withOpenSSL
 -- >                                         , context
+-- >                                         , requestBody
+-- >                                         , stream
+-- >                                         , method
 -- >                                         )
 -- >  
 -- > ------------------------------------------------------------------------------
@@ -23,6 +26,20 @@
 -- >   withManager settings $ \mgr ->
 -- >     withHTTP req mgr $ \resp ->
 -- >       Streams.supplyTo Streams.stdout (responseBody resp)
+-- >
+-- > ------------------------------------------------------------------------------
+-- > -- | POST test
+-- > post :: IO ()
+-- > post = withOpenSSL $ do
+-- >   let settings = opensslManagerSettings context
+-- >   req <- parseUrl "https://google.com"
+-- >   let request = req { method = "POST"
+-- >                     , requestBody = stream $ Streams.fromLazyByteString "body"
+-- >                     }
+-- >   withManager settings $ \mgr ->
+-- >     withHTTP req mgr $ \resp ->
+-- >       Streams.supplyTo Streams.stdout (responseBody resp)
+
 --
 -- For non-streaming request bodies, study the 'RequestBody' type,
 -- which also
@@ -105,18 +122,20 @@ from io = Streams.makeInputStream $ do
 
 ------------------------------------------------------------------------------
 -- | Stream body of request
-to :: InputStream ByteString -> (IO ByteString -> IO ()) -> IO ()
-to is f = f $ maybe B.empty id <$> Streams.read is
+to :: IO (InputStream ByteString) -> (IO ByteString -> IO ()) -> IO ()
+to m f = do
+  is <- m
+  f $ maybe B.empty id <$> Streams.read is
 
 ------------------------------------------------------------------------------
 -- | Stream body of request
-stream :: InputStream ByteString -> RequestBody
+stream :: IO (InputStream ByteString) -> RequestBody
 stream p = RequestBodyStreamChunked (to p)
 {-# INLINABLE stream #-}
 
 ------------------------------------------------------------------------------
 -- | Stream with N bytes exactly
-streamN :: Int64 -> InputStream ByteString -> RequestBody
+streamN :: Int64 -> IO (InputStream ByteString) -> RequestBody
 streamN n p = RequestBodyStream n (to p)
 {-# INLINABLE streamN #-}
 
