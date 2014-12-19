@@ -17,13 +17,25 @@ import           System.IO.Streams.HTTP ( opensslManagerSettings
                                         )
 
 ------------------------------------------------------------------------------
--- | OpenSSL test
+-- | OpenSSL test (GET)
 main :: IO ()
 main = withOpenSSL $ do
-  let settings = opensslManagerSettings context         
   req <- parseUrl "https://google.com"
-  withManager settings $ \mgr ->
+  withManager (opensslManagerSettings context) $ \mgr ->
     withHTTP req mgr $ \resp ->
       Streams.supplyTo Streams.stdout (responseBody resp)
+
+------------------------------------------------------------------------------
+-- | OpenSSL test (POST)
+post :: IO ()
+post = withOpenSSL $ do
+  let settings = 
+  req <- parseUrl "https://google.com"
+  let request = req { method = "POST"
+                    , requestBody = stream $ Streams.fromLazyByteString "body"
+                    }
+  withManager (opensslManagerSettings context) $ \mgr ->
+    withHTTP request mgr $ \resp ->
+      Streams.supplyTo Streams.stdout (responseBody resp)  
 ```
 
