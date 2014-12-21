@@ -82,6 +82,8 @@ import           System.IO.Streams.ByteString
     This module is a thin @io-streams@ wrapper around the @http-client@ and
     @http-client-openssl@ libraries.
 
+    If you'd rather use the `tls` library for encryption please see this package: <https://hackage.haskell.org/package/io-streams-http>
+
     Read the documentation in the "Network.HTTP.Client" module of the
     @http-client@ library to learn about how to:
 
