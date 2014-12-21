@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 -- | Here is an example GET request that streams the response body to standard
 --   output:
 --
@@ -18,7 +19,7 @@
 -- >                                         )
 -- >  
 -- > ------------------------------------------------------------------------------
--- > -- | OpenSSL test
+-- > -- | GET test (openssl)
 -- > main :: IO ()
 -- > main = withOpenSSL $ do
 -- >   let settings = opensslManagerSettings context
@@ -28,7 +29,7 @@
 -- >       Streams.supplyTo Streams.stdout (responseBody resp)
 -- >
 -- > ------------------------------------------------------------------------------
--- > -- | POST test
+-- > -- | POST test (tls)
 -- > post :: IO ()
 -- > post = withOpenSSL $ do
 -- >   let settings = opensslManagerSettings context
@@ -49,9 +50,13 @@ module System.IO.Streams.HTTP (
     -- * http-client
     -- $httpclient
     module Network.HTTP.Client
+#ifdef TLS
+  , module Network.HTTP.Client.TLS
+#else
   , module Network.HTTP.Client.OpenSSL
   , module OpenSSL
   , module OpenSSL.Session
+#endif
     -- * io-streams Interface
   , withHTTP
   , streamN
@@ -64,10 +69,14 @@ import           Data.ByteString         ( ByteString )
 import qualified Data.ByteString as B
 import           Data.Int                ( Int64 )
 import           Network.HTTP.Client
-import           Network.HTTP.Client.OpenSSL
 
+#ifdef TLS
+import           Network.HTTP.Client.TLS
+#else
 import           OpenSSL
 import           OpenSSL.Session
+import           Network.HTTP.Client.OpenSSL
+#endif
 
 import           System.IO               ( stdout )
 import           System.IO.Streams       ( InputStream
