@@ -1,5 +1,6 @@
+{-# LANGUAGE CPP #-}
 -- | Here is an example GET request that streams the response body to standard
---   output:
+--   output with OpenSSL:
 --
 -- > {-# LANGUAGE OverloadedStrings #-}
 -- > module Main where
@@ -18,7 +19,7 @@
 -- >                                         )
 -- >  
 -- > ------------------------------------------------------------------------------
--- > -- | OpenSSL test
+-- > -- | GET test (openssl)
 -- > main :: IO ()
 -- > main = withOpenSSL $ do
 -- >   let settings = opensslManagerSettings context
@@ -27,8 +28,9 @@
 -- >     withHTTP req mgr $ \resp ->
 -- >       Streams.supplyTo Streams.stdout (responseBody resp)
 -- >
+-- >
 -- > ------------------------------------------------------------------------------
--- > -- | POST test
+-- > -- | POST test (tls)
 -- > post :: IO ()
 -- > post = withOpenSSL $ do
 -- >   let settings = opensslManagerSettings context
@@ -40,6 +42,7 @@
 -- >     withHTTP req mgr $ \resp ->
 -- >       Streams.supplyTo Streams.stdout (responseBody resp)
 
+
 --
 -- For non-streaming request bodies, study the 'RequestBody' type,
 -- which also
@@ -49,9 +52,13 @@ module System.IO.Streams.HTTP (
     -- * http-client
     -- $httpclient
     module Network.HTTP.Client
+#ifdef FLAG
+  , module Network.HTTP.Client.TLS
+#else
   , module Network.HTTP.Client.OpenSSL
   , module OpenSSL
   , module OpenSSL.Session
+#endif
     -- * io-streams Interface
   , withHTTP
   , streamN
@@ -64,11 +71,13 @@ import           Data.ByteString         ( ByteString )
 import qualified Data.ByteString as B
 import           Data.Int                ( Int64 )
 import           Network.HTTP.Client
-import           Network.HTTP.Client.OpenSSL
-
+#ifdef FLAG
+import           Network.HTTP.Client.TLS
+#else
 import           OpenSSL
 import           OpenSSL.Session
-
+import           Network.HTTP.Client.OpenSSL
+#endif
 import           System.IO               ( stdout )
 import           System.IO.Streams       ( InputStream
                                          , OutputStream
@@ -82,7 +91,8 @@ import           System.IO.Streams.ByteString
     This module is a thin @io-streams@ wrapper around the @http-client@ and
     @http-client-openssl@ libraries.
 
-    If you'd rather use the `tls` library for encryption please see this package: <https://hackage.haskell.org/package/io-streams-http>
+    If you'd rather use the `tls` library for encryption then compile
+    with the tls flag (i.e. cabal configure -ftls) 
 
     Read the documentation in the "Network.HTTP.Client" module of the
     @http-client@ library to learn about how to:
